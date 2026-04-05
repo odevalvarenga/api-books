@@ -2,7 +2,6 @@ package com.example.books.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Data
