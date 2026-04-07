@@ -17,10 +17,12 @@ public class ReviewService {
     private final ReviewRepository repository;
     private final BookRepository bookRepository;
 
+    //LISTAR
     public List<Review> listar() {
         return repository.findAll();
     }
 
+    //SALVAR(POST)
     public Review salvar(Review review) {
 
         Book book = bookRepository.findById(review.getBook().getId())
@@ -29,5 +31,30 @@ public class ReviewService {
         review.setBook(book);
 
         return repository.save(review);
+    }
+
+    //ATUALIZAR(PUT)
+    public Review atualizar(Long id, Review review) {
+
+        Review existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review não encontrada"));
+
+        Book book = bookRepository.findById(review.getBook().getId())
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+
+        existente.setComment(review.getComment());
+        existente.setRating(review.getRating());
+        existente.setBook(book);
+
+        return repository.save(existente);
+    }
+
+    //DELETAR(DELETE)
+    public void deletar(Long id) {
+
+        Review review = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review não encontrada"));
+
+        repository.delete(review);
     }
 }

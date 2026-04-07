@@ -2,6 +2,7 @@ package com.example.books.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.example.books.enums.Rating;
 
 @Entity
 @Data
@@ -15,9 +16,10 @@ public class Review {
 
     private String comment;
 
-    private int rating; // nota de 1 a 5
-
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Enumerated(EnumType.STRING)
+    private Rating rating;
 }

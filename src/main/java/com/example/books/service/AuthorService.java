@@ -21,4 +21,21 @@ public class AuthorService {
     public Author salvar(Author author) {
         return repository.save(author);
     }
+
+    public Author atualizar(Long id, Author author) {
+        Author existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+
+        existente.setName(author.getName());
+        existente.setEmail(author.getEmail());
+
+        return repository.save(existente);
+    }
+
+    public void deletar(Long id) {
+        Author existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+
+        repository.delete(existente);
+    }
 }

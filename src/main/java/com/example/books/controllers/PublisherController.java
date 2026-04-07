@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import com.example.books.entities.Publisher;
 import com.example.books.service.PublisherService;
 
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
 
 @RestController
@@ -22,5 +24,16 @@ public class PublisherController {
     @PostMapping
     public Publisher criar(@RequestBody Publisher publisher) {
         return service.salvar(publisher);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Publisher> atualizar(@PathVariable Long id, @RequestBody Publisher publisher) {
+        return ResponseEntity.ok(service.atualizar(id, publisher));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
