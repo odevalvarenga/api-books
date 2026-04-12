@@ -7,12 +7,14 @@ import com.example.books.entities.Review;
 import com.example.books.service.ReviewService;
 
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
+@Tag(name = "Reviews", description = " ")
 public class ReviewController {
 
     private final ReviewService service;

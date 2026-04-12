@@ -11,9 +11,12 @@ import com.example.books.entities.Author;
 import com.example.books.service.AuthorService;
 import jakarta.validation.Valid;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/authors")
 @RequiredArgsConstructor
+@Tag(name = "Authors", description = " ")
 public class AuthorController {
 
     private final AuthorService service;

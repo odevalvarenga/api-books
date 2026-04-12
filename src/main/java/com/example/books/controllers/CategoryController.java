@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import com.example.books.entities.Category;
 import com.example.books.service.CategoryService;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@Tag(name = "Categories", description = " ")
 public class CategoryController {
 
     private final CategoryService service;

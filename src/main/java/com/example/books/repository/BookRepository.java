@@ -12,5 +12,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     // busca por título ja com a paginaçao
     List<Book> findByTitleContainingIgnoreCase(String title);
+    List<Book> findByAuthorId(Long authorId);
 
 }

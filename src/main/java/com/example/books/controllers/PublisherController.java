@@ -6,12 +6,14 @@ import com.example.books.entities.Publisher;
 import com.example.books.service.PublisherService;
 
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/publishers")
 @RequiredArgsConstructor
+@Tag(name = "Publishers", description = " ")
 public class PublisherController {
 
     private final PublisherService service;

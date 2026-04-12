@@ -80,5 +80,12 @@ public class BookService {
 
         return repository.save(existente);
     }
+    public Book buscarPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+    }
+    public List<Book> buscarPorAutor(Long authorId) {
+        return repository.findByAuthorId(authorId);
+    }
 
 }
