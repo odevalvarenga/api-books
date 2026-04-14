@@ -15,6 +15,7 @@ import com.example.books.repository.PublisherRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.dao.DataIntegrityViolationException;
 
 
 import java.util.List;
@@ -31,14 +32,21 @@ public class BookService {
     public Page<Book> listar(Pageable pageable) {
         return repository.findAll(pageable);
     }
+
     public List<Book> buscarPorTitulo(String title) {
         return repository.findByTitleContainingIgnoreCase(title);
     }
-    public void deletar(Long id) {
-        Book existente = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
-        repository.delete(existente);
+    public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Livro com ID " + id + " não encontrado");
+        }
+
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw ex; //ESSA LINHA É A CHAVE
+        }
     }
 
     public Book salvar(Book book) {
@@ -57,7 +65,7 @@ public class BookService {
         book.setCategory(category);
 
         return repository.save(book);
-    } // ✅ FECHOU AQUI
+    } //FECHOU AQUI
 
     public Book atualizar(Long id, Book book) {
 
@@ -80,6 +88,7 @@ public class BookService {
 
         return repository.save(existente);
     }
+
     public Book buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
