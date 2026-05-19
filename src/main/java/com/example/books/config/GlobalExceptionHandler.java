@@ -5,6 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -60,5 +65,26 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(error);
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String,String>>
+    handleValidation(
+            MethodArgumentNotValidException ex){
+
+        Map<String,String> erros = new HashMap<>();
+
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(error ->
+
+                        erros.put(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        )
+                );
+
+        return ResponseEntity
+                .badRequest()
+                .body(erros);
     }
 }

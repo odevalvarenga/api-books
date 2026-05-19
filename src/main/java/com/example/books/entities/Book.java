@@ -1,13 +1,13 @@
 package com.example.books.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Data
@@ -19,22 +19,23 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "O título é obrigatório")
+    @Size(
+            min = 2,
+            max = 100,
+            message = "Título deve ter entre 2 e 100 caracteres"
+    )
     private String title;
 
+    @NotNull(message = "Autor é obrigatório")
     @ManyToOne
-    @JoinColumn(name = "author_id")
     private Author author;
 
+    @NotNull(message = "Categoria é obrigatória")
     @ManyToOne
-    @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotNull(message = "Editora é obrigatória")
     @ManyToOne
-    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
-
-    @OneToMany(mappedBy = "book")
-    @JsonIgnore
-    private List<Review> reviews;
-
 }

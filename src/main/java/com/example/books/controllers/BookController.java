@@ -39,7 +39,8 @@ public class BookController {
     @Operation(summary = "Listar livros com paginação")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Erro interno")
+            @ApiResponse(responseCode = "500", description = "Erro interno"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
     })
     @GetMapping
     public Page<Book> listar(Pageable pageable) {
@@ -50,13 +51,14 @@ public class BookController {
     @Operation(summary = "Buscar livro por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro encontrado"),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado")
+            @ApiResponse(responseCode = "401", description = "API Key inválida"),
+            @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
     })
     @GetMapping("/{id}")
     public ResponseEntity<Book> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
-
     //BUSCAR POR TÍTULO
     @Operation(summary = "Buscar livros por título")
     @GetMapping("/search")
@@ -94,7 +96,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Livro criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "500", description = "Erro interno")
+            @ApiResponse(responseCode = "500", description = "Erro interno"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
     })
     public ResponseEntity<Book> criar(@Valid @RequestBody Book book) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(book));
@@ -105,7 +108,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Livro atualizado"),
             @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
     })
     @PutMapping("/{id}")
     public ResponseEntity<Book> atualizar(@PathVariable Long id, @Valid @RequestBody Book book) {
@@ -117,7 +121,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Livro deletado"),
             @ApiResponse(responseCode = "404", description = "Livro não encontrado"),
-            @ApiResponse(responseCode = "409", description = "Conflito: livro possui registros vinculados")
+            @ApiResponse(responseCode = "409", description = "Conflito: livro possui registros vinculados"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
