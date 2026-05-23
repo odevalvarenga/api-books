@@ -1,7 +1,10 @@
 package com.example.books.config;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -11,7 +14,8 @@ import java.io.IOException;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private int contador = 0;
-    private final int LIMITE = 9;
+
+    private final int LIMITE = 5;
 
     @Override
     protected void doFilterInternal(
@@ -23,39 +27,54 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // libera swagger
-        if(path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/swagger-resources")
-                || path.startsWith("/webjars")) {
+        // ignora swagger
+        if (path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")) {
 
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
             return;
         }
 
         contador++;
 
-        System.out.println(
-                "Requisição: " + contador
-        );
+        System.out.println("Requisição: " + contador);
 
-        if(contador > LIMITE){
-
-            contador = 0;
-
-            response.reset();
+        if (contador > LIMITE) {
 
             response.setStatus(429);
 
             response.setContentType("application/json");
 
-            response.getWriter().write(
-                    "{\"erro\":\"Limite de requisições excedido\"}"
+            response.setCharacterEncoding("UTF-8");
+
+            ApiError error = new ApiError(
+                    429,
+                    "Too Many Requests",
+                    "Limite de requisições excedido",
+                    request.getRequestURI()
             );
+
+            response.getWriter().write("""
+                    {
+                        "timestamp":"%s",
+                        "status":%d,
+                        "error":"%s",
+                        "message":"%s",
+                        "path":"%s"
+                    }
+                    """.formatted(
+                    error.getTimestamp(),
+                    error.getStatus(),
+                    error.getError(),
+                    error.getMessage(),
+                    error.getPath()
+            ));
+
+            response.getWriter().flush();
 
             return;
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
