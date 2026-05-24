@@ -15,68 +15,62 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-        @Bean
-        public OpenAPI customOpenAPI() {
+    @Bean
+    public OpenAPI customOpenAPI() {
 
-                final String securitySchemeName = "API Key";
+        final String securitySchemeName = "API Key";
 
-                return new OpenAPI()
+        return new OpenAPI()
 
-                        .info(
-                                new Info()
+                .info(
+                        new Info()
 
-                                        .title("API de Livros")
+                                .title("Books API")
 
-                                        .version("1.0")
+                                .version("1.0.0")
 
-                                        .description("""
+                                .description("""
 
-API REST para gerenciamento de livros, autores, categorias, editoras e avaliações.
+API REST para gerenciamento de livros.
 
-Esta API permite:
+🔗 PRODUÇÃO:
+https://api-books-bh0c.onrender.com/
+
+FUNCIONALIDADES:
 
 • Cadastro de livros
 • Consulta de livros
 • Atualização de registros
 • Exclusão de registros
-• Paginação
 • Busca por título
 • Busca por autor
+• Paginação
 • Gerenciamento de avaliações
 
-REGRAS DE SEGURANÇA:
+SEGURANÇA:
 
 • Todas as rotas exigem API Key
-• Header obrigatório: x-api-key
-• Valor padrão para testes: 123456
+• Header obrigatório:
+x-api-key
+
+• Valor para testes:
+123456
 
 RATE LIMIT:
 
 • Máximo de 5 requisições consecutivas
-• Ao exceder o limite:
+• Excesso:
 HTTP 429 - Too Many Requests
 
 IDEMPOTÊNCIA:
 
-• Requisições POST exigem:
+• Requisições POST utilizam:
 Idempotency-Key
 
-• Requisições duplicadas retornam:
+• Requisições duplicadas:
 HTTP 409 - Conflict
 
-PADRÃO DE ERROS:
-
-Todos os erros retornam:
-
-{
-  "timestamp": "...",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "...",
-  "path": "..."
-}
-
-TECNOLOGIAS UTILIZADAS:
+TECNOLOGIAS:
 
 • Java 21
 • Spring Boot
@@ -86,32 +80,36 @@ TECNOLOGIAS UTILIZADAS:
 • Swagger OpenAPI 3
 • H2 Database
 
+STATUS:
+Projeto online e deployado no Render.
+
                                 """)
 
-                                        .contact(
-                                                new Contact()
-                                                        .name("Rafael Alvarenga")
-                                                        .email("devalvarenga@gmail.com")
-                                        )
+                                .contact(
+                                        new Contact()
+                                                .name("Rafael Alvarenga")
+                                                .email("devalvarenga@gmail.com")
+                                                .url("https://github.com/odevalvarenga")
+                                )
 
-                                        .license(
-                                                new License()
-                                                        .name("Projeto acadêmico")
-                                        )
-                        )
+                                .license(
+                                        new License()
+                                                .name("Projeto acadêmico")
+                                )
+                )
 
-                        .addSecurityItem(
-                                new SecurityRequirement()
-                                        .addList(securitySchemeName)
-                        )
+                .addSecurityItem(
+                        new SecurityRequirement()
+                                .addList(securitySchemeName)
+                )
 
-                        .schemaRequirement(
-                                securitySchemeName,
+                .schemaRequirement(
+                        securitySchemeName,
 
-                                new SecurityScheme()
-                                        .name("x-api-key")
-                                        .type(SecurityScheme.Type.APIKEY)
-                                        .in(SecurityScheme.In.HEADER)
-                        );
-        }
+                        new SecurityScheme()
+                                .name("x-api-key")
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                );
+    }
 }
