@@ -26,6 +26,14 @@ public class IdempotencyFilter extends OncePerRequestFilter {
 
             throws ServletException, IOException {
 
+        // libera preflight CORS
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
         String path = request.getRequestURI();
 
         // ignora swagger
@@ -33,6 +41,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
                 || path.startsWith("/v3/api-docs")) {
 
             filterChain.doFilter(request, response);
+
             return;
         }
 
@@ -86,6 +95,9 @@ public class IdempotencyFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }

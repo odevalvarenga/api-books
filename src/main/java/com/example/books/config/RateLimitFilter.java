@@ -15,7 +15,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private int contador = 0;
 
-    private final int LIMITE = 5;
+    private final int LIMITE = 9;
 
     @Override
     protected void doFilterInternal(
@@ -25,6 +25,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
             throws ServletException, IOException {
 
+        // libera preflight CORS
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
         String path = request.getRequestURI();
 
         // ignora swagger
@@ -32,18 +40,23 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 || path.startsWith("/v3/api-docs")) {
 
             filterChain.doFilter(request, response);
+
             return;
         }
 
         contador++;
 
-        System.out.println("Requisição: " + contador);
+        System.out.println(
+                "Requisição: " + contador
+        );
 
         if (contador > LIMITE) {
 
             response.setStatus(429);
 
-            response.setContentType("application/json");
+            response.setContentType(
+                    "application/json"
+            );
 
             response.setCharacterEncoding("UTF-8");
 
@@ -75,6 +88,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }

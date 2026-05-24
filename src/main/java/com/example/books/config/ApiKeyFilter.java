@@ -20,28 +20,60 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)
+
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")) {
+        // libera arquivos frontend
+        if (
+                path.equals("/")
+                        || path.endsWith(".html")
+                        || path.endsWith(".css")
+                        || path.endsWith(".js")
+                        || path.startsWith("/swagger-ui")
+                        || path.startsWith("/v3/api-docs")
+        ) {
 
             filterChain.doFilter(request, response);
-            return;
-        }
-
-        String apiKey = request.getHeader("x-api-key");
-
-        if (apiKey == null || !apiKey.equals(API_KEY)) {
-
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Chave de API inválida");
 
             return;
         }
 
-        // importante: apenas continua
-        filterChain.doFilter(request, response);
+        // libera OPTIONS
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
+        String apiKey =
+                request.getHeader("x-api-key");
+
+        if (apiKey == null
+                || !apiKey.equals(API_KEY)) {
+
+            response.setStatus(
+                    HttpServletResponse.SC_UNAUTHORIZED
+            );
+
+            response.setContentType(
+                    "application/json"
+            );
+
+            response.getWriter().write("""
+                    {
+                        "erro":"API Key inválida"
+                    }
+                    """);
+
+            return;
+        }
+
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }
