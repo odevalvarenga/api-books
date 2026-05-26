@@ -15,9 +15,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
 
             @Override
-            public void addCorsMappings(
-                    CorsRegistry registry
-            ) {
+            public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")
 
@@ -27,7 +25,8 @@ public class CorsConfig {
                                 "GET",
                                 "POST",
                                 "PUT",
-                                "DELETE"
+                                "DELETE",
+                                "OPTIONS"
                         )
 
                         .allowedHeaders("*");
