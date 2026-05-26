@@ -15,6 +15,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private int contador = 0;
 
+    private long ultimoReset = System.currentTimeMillis();
+
     private final int LIMITE = 9;
 
     @Override
@@ -25,7 +27,16 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
             throws ServletException, IOException {
 
-        // libera preflight CORS
+        // RESET A CADA 1 MINUTO
+        if (System.currentTimeMillis() - ultimoReset > 60000) {
+
+            contador = 0;
+
+            ultimoReset = System.currentTimeMillis();
+        }
+
+
+        // LIBERA OPTIONS (CORS)
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
 
             filterChain.doFilter(request, response);
@@ -33,9 +44,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
+
         String path = request.getRequestURI();
 
-        // ignora swagger
+
+        // IGNORA SWAGGER
         if (path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")) {
 
@@ -44,12 +57,15 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
+
         contador++;
 
         System.out.println(
                 "Requisição: " + contador
         );
 
+
+        // LIMITE EXCEDIDO
         if (contador > LIMITE) {
 
             response.setStatus(429);
@@ -60,33 +76,19 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
             response.setCharacterEncoding("UTF-8");
 
-            ApiError error = new ApiError(
-                    429,
-                    "Too Many Requests",
-                    "Limite de requisições excedido",
-                    request.getRequestURI()
-            );
-
             response.getWriter().write("""
                     {
-                        "timestamp":"%s",
-                        "status":%d,
-                        "error":"%s",
-                        "message":"%s",
-                        "path":"%s"
+                        "status":429,
+                        "error":"Too Many Requests",
+                        "message":"Limite de requisições excedido"
                     }
-                    """.formatted(
-                    error.getTimestamp(),
-                    error.getStatus(),
-                    error.getError(),
-                    error.getMessage(),
-                    error.getPath()
-            ));
+                    """);
 
             response.getWriter().flush();
 
             return;
         }
+
 
         filterChain.doFilter(
                 request,
