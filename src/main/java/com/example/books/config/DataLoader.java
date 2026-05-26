@@ -1,73 +1,185 @@
 package com.example.books.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.example.books.entities.Author;
+import com.example.books.entities.Book;
+import com.example.books.entities.Category;
+import com.example.books.entities.Publisher;
+
+import com.example.books.repository.AuthorRepository;
+import com.example.books.repository.BookRepository;
+import com.example.books.repository.CategoryRepository;
+import com.example.books.repository.PublisherRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Component
+@RequiredArgsConstructor
+public class DataLoader implements CommandLineRunner {
 
-import com.example.books.entities.*;
-import com.example.books.enums.Rating;
-import com.example.books.repository.*;
+    private final BookRepository bookRepository;
 
-@Configuration
-public class DataLoader {
+    private final AuthorRepository authorRepository;
 
-    @Bean
-    CommandLineRunner loadData(
-            AuthorRepository authorRepo,
-            CategoryRepository categoryRepo,
-            PublisherRepository publisherRepo,
-            BookRepository bookRepo,
-            ReviewRepository reviewRepo
-    ) {
+    private final CategoryRepository categoryRepository;
 
-        return args -> {
+    private final PublisherRepository publisherRepository;
 
-            // AUTHORS
-            Author a1 = new Author(null, "Robert Martin", "robert@email.com", null);
-            Author a2 = new Author(null, "Joshua Bloch", "bloch@email.com", null);
+    @Override
+    public void run(String... args) {
 
-            authorRepo.saveAll(List.of(a1, a2));
+        // evita duplicar dados
+        if (bookRepository.count() > 0) {
 
-            // CATEGORIES
-            Category c1 = new Category(null, "Programação", null);
-            Category c2 = new Category(null, "Arquitetura", null);
+            return;
+        }
 
-            categoryRepo.saveAll(List.of(c1, c2));
 
-            // PUBLISHERS
-            Publisher p1 = new Publisher(null, "Alta Books", null);
-            Publisher p2 = new Publisher(null, "Pearson", null);
+        // =========================
+        // AUTORES
+        // =========================
 
-            publisherRepo.saveAll(List.of(p1, p2));
+        Author martin = new Author();
+        martin.setName("Robert C. Martin");
+        martin.setEmail("martin@email.com");
 
-            // BOOKS
-            Book b1 = new Book();
-            b1.setTitle("Clean Code");
-            b1.setAuthor(a1);
-            b1.setCategory(c1);
-            b1.setPublisher(p1);
 
-            Book b2 = new Book();
-            b2.setTitle("Effective Java");
-            b2.setAuthor(a2);
-            b2.setCategory(c1);
-            b2.setPublisher(p2);
+        Author sapkowski = new Author();
+        sapkowski.setName("Andrzej Sapkowski");
+        sapkowski.setEmail("sapkowski@email.com");
 
-            Book b3 = new Book();
-            b3.setTitle("Refactoring");
-            b3.setAuthor(a1);
-            b3.setCategory(c2);
-            b3.setPublisher(p2);
 
-            bookRepo.saveAll(List.of(b1, b2, b3));
+        Author tolkien = new Author();
+        tolkien.setName("J.R.R Tolkien");
+        tolkien.setEmail("tolkien@email.com");
 
-            // REVIEWS
-            Review r1 = new Review(null, "Excelente livro", b1, Rating.OTIMO);
-            Review r2 = new Review(null, "Muito bom", b2, Rating.BOM);
 
-            reviewRepo.saveAll(List.of(r1, r2));
-        };
+        Author gibson = new Author();
+        gibson.setName("William Gibson");
+        gibson.setEmail("gibson@email.com");
+
+
+        Author herbert = new Author();
+        herbert.setName("Frank Herbert");
+        herbert.setEmail("herbert@email.com");
+
+
+        Author bloch = new Author();
+        bloch.setName("Joshua Bloch");
+        bloch.setEmail("bloch@email.com");
+
+
+        authorRepository.save(martin);
+        authorRepository.save(sapkowski);
+        authorRepository.save(tolkien);
+        authorRepository.save(gibson);
+        authorRepository.save(herbert);
+        authorRepository.save(bloch);
+
+
+
+        // =========================
+        // CATEGORIAS
+        // =========================
+
+        Category fantasy = new Category();
+        fantasy.setName("Fantasia");
+
+
+        Category sciFi = new Category();
+        sciFi.setName("Ficção Científica");
+
+
+        Category programming = new Category();
+        programming.setName("Programação");
+
+
+        categoryRepository.save(fantasy);
+        categoryRepository.save(sciFi);
+        categoryRepository.save(programming);
+
+
+
+        // =========================
+        // EDITORAS
+        // =========================
+
+        Publisher altaBooks = new Publisher();
+        altaBooks.setName("Alta Books");
+
+
+        Publisher orbit = new Publisher();
+        orbit.setName("Orbit");
+
+
+        Publisher harper = new Publisher();
+        harper.setName("Harper Collins");
+
+
+        publisherRepository.save(altaBooks);
+        publisherRepository.save(orbit);
+        publisherRepository.save(harper);
+
+
+
+        // =========================
+        // LIVROS
+        // =========================
+
+        Book cleanCode = new Book();
+        cleanCode.setTitle("Clean Code");
+        cleanCode.setAuthor(martin);
+        cleanCode.setCategory(programming);
+        cleanCode.setPublisher(altaBooks);
+
+
+        Book witcher = new Book();
+        witcher.setTitle("The Witcher");
+        witcher.setAuthor(sapkowski);
+        witcher.setCategory(fantasy);
+        witcher.setPublisher(orbit);
+
+
+        Book lotr = new Book();
+        lotr.setTitle("Senhor dos Aneis");
+        lotr.setAuthor(tolkien);
+        lotr.setCategory(fantasy);
+        lotr.setPublisher(harper);
+
+
+        Book dune = new Book();
+        dune.setTitle("Duna");
+        dune.setAuthor(herbert);
+        dune.setCategory(sciFi);
+        dune.setPublisher(orbit);
+
+
+        Book neuromancer = new Book();
+        neuromancer.setTitle("Neuromancer");
+        neuromancer.setAuthor(gibson);
+        neuromancer.setCategory(sciFi);
+        neuromancer.setPublisher(harper);
+
+
+        Book effectiveJava = new Book();
+        effectiveJava.setTitle("Java Efetivo");
+        effectiveJava.setAuthor(bloch);
+        effectiveJava.setCategory(programming);
+        effectiveJava.setPublisher(altaBooks);
+
+
+        bookRepository.save(cleanCode);
+        bookRepository.save(witcher);
+        bookRepository.save(lotr);
+        bookRepository.save(dune);
+        bookRepository.save(neuromancer);
+        bookRepository.save(effectiveJava);
+
+
+        System.out.println(
+                "Livros geek carregados!"
+        );
     }
 }
