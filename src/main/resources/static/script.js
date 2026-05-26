@@ -1,11 +1,46 @@
 const apiUrl = "/books";
 
+function mostrarPagina(id) {
 
-// =========================
-// LISTAR LIVROS
-// =========================
+    const paginas = document.querySelectorAll(".pagina");
+
+    paginas.forEach(pagina => {
+
+        pagina.style.display = "none";
+
+    });
+
+    document.getElementById(id).style.display = "block";
+}
+
+/* =========================
+   TROCAR PÁGINAS
+========================= */
+
+function mostrarPagina(id) {
+
+    document.getElementById("paginaBiblioteca")
+        .style.display = "none";
+
+    document.getElementById("paginaBusca")
+        .style.display = "none";
+
+    document.getElementById("paginaNovoLivro")
+        .style.display = "none";
+
+    document.getElementById(id)
+        .style.display = "block";
+}
+
+
+
+/* =========================
+   LISTAR LIVROS
+========================= */
 
 async function carregarLivros() {
+
+    mostrarPagina("paginaBiblioteca");
 
     try {
 
@@ -18,22 +53,29 @@ async function carregarLivros() {
             }
         });
 
-        const dados = await resposta.json();
+        const dados =
+            await resposta.json();
 
-        const livros = dados.content;
+        const livros =
+            dados.content;
 
         const lista =
             document.getElementById("listaLivros");
 
         lista.innerHTML = "";
 
-        if (!Array.isArray(livros)) {
+
+
+        if (!Array.isArray(livros)
+            || livros.length === 0) {
 
             lista.innerHTML =
                 "<p>Nenhum livro encontrado</p>";
 
             return;
         }
+
+
 
         livros.forEach(livro => {
 
@@ -43,7 +85,25 @@ async function carregarLivros() {
 
                     <h3>${livro.title}</h3>
 
-                    <p>ID: ${livro.id}</p>
+                    <p>
+                        <strong>ID:</strong>
+                        ${livro.id}
+                    </p>
+
+                    <p>
+                        <strong>Autor:</strong>
+                        ${livro.author?.name || "Não informado"}
+                    </p>
+
+                    <p>
+                        <strong>Categoria:</strong>
+                        ${livro.category?.name || "Não informado"}
+                    </p>
+
+                    <p>
+                        <strong>Editora:</strong>
+                        ${livro.publisher?.name || "Não informado"}
+                    </p>
 
                 </div>
             `;
@@ -59,14 +119,16 @@ async function carregarLivros() {
 
 
 
-// =========================
-// CRIAR LIVRO
-// =========================
+/* =========================
+   CRIAR LIVRO
+========================= */
 
 async function criarLivro() {
 
     const titulo =
         document.getElementById("titulo").value;
+
+
 
     if (titulo.trim() === "") {
 
@@ -74,6 +136,8 @@ async function criarLivro() {
 
         return;
     }
+
+
 
     try {
 
@@ -109,17 +173,16 @@ async function criarLivro() {
             })
         });
 
+
+
         if (!resposta.ok) {
-
-            const erro =
-                await resposta.text();
-
-            console.log(erro);
 
             alert("Erro API");
 
             return;
         }
+
+
 
         alert("Livro criado!");
 
@@ -137,14 +200,16 @@ async function criarLivro() {
 
 
 
-// =========================
-// BUSCAR LIVRO
-// =========================
+/* =========================
+   BUSCAR
+========================= */
 
 async function buscarLivro() {
 
     const texto =
         document.getElementById("pesquisa").value;
+
+    mostrarPagina("paginaBiblioteca");
 
     try {
 
@@ -161,6 +226,8 @@ async function buscarLivro() {
             }
         );
 
+
+
         const livros =
             await resposta.json();
 
@@ -169,13 +236,18 @@ async function buscarLivro() {
 
         lista.innerHTML = "";
 
-        if (!Array.isArray(livros)) {
+
+
+        if (!Array.isArray(livros)
+            || livros.length === 0) {
 
             lista.innerHTML =
                 "<p>Nenhum resultado</p>";
 
             return;
         }
+
+
 
         livros.forEach(livro => {
 
@@ -185,28 +257,25 @@ async function buscarLivro() {
 
                     <h3>${livro.title}</h3>
 
-                    <div class="info">
-                        <strong>ID:</strong> ${livro.id}
-                    </div>
+                    <p>
+                        <strong>ID:</strong>
+                        ${livro.id}
+                    </p>
 
-                    <div class="info">
+                    <p>
                         <strong>Autor:</strong>
                         ${livro.author?.name || "Não informado"}
-                    </div>
+                    </p>
 
-                    <div class="info">
+                    <p>
                         <strong>Categoria:</strong>
                         ${livro.category?.name || "Não informado"}
-                    </div>
+                    </p>
 
-                    <div class="info">
+                    <p>
                         <strong>Editora:</strong>
                         ${livro.publisher?.name || "Não informado"}
-                    </div>
-
-                    <span class="tag">
-                        Livro
-                    </span>
+                    </p>
 
                 </div>
             `;
@@ -220,5 +289,13 @@ async function buscarLivro() {
     }
 }
 
+/* PÁGINA INICIAL */
+
+window.onload = () => {
+
+    mostrarPagina("paginaBiblioteca");
+
+    carregarLivros();
+};
 
 carregarLivros();
