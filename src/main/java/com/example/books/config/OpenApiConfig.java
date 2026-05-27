@@ -31,70 +31,42 @@ public class OpenApiConfig {
 
                                 .description("""
 
-API REST para gerenciamento de livros.
-
-🔗 PRODUÇÃO:
-https://api-books-bh0c.onrender.com/
-
-FUNCIONALIDADES:
-
-• Cadastro de livros
-• Consulta de livros
-• Atualização de registros
-• Exclusão de registros
-• Busca por título
-• Busca por autor
-• Paginação
-• Gerenciamento de avaliações
+API REST para gerenciamento de livros e avaliações.
 
 SEGURANÇA:
 
 • Todas as rotas exigem API Key
-• Header obrigatório:
-x-api-key
-
-• Valor para testes:
-123456
+• Header obrigatório: x-api-key
+• Valor para testes: 123456
 
 RATE LIMIT:
 
-• Máximo de 5 requisições consecutivas
-• Excesso:
-HTTP 429 - Too Many Requests
+• Limite de requisições consecutivas por cliente
+• Excesso retorna: HTTP 429 - Too Many Requests
 
 IDEMPOTÊNCIA:
 
-• Requisições POST utilizam:
-Idempotency-Key
-
-• Requisições duplicadas:
-HTTP 409 - Conflict
-
-TECNOLOGIAS:
-
-• Java 21
-• Spring Boot
-• Spring Data JPA
-• Hibernate
-• Maven
-• Swagger OpenAPI 3
-• H2 Database
+• Requisições POST utilizam Idempotency-Key
+• Requisições duplicadas retornam: HTTP 409 - Conflict
 
 STATUS:
-Projeto online e deployado no Render.
 
-                                """)
+• API online em produção
+• Backend deployado no Render
+• Frontend separado da API
+
+Projeto acadêmico
+
+""")
 
                                 .contact(
                                         new Contact()
                                                 .name("Rafael Alvarenga")
-                                                .email("devalvarenga@gmail.com")
-                                                .url("https://github.com/odevalvarenga")
                                 )
 
                                 .license(
                                         new License()
-                                                .name("Projeto acadêmico")
+                                                .name("Uso acadêmico")
                                 )
                 )
 
