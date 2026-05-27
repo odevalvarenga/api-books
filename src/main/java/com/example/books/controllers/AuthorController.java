@@ -4,11 +4,16 @@ import com.example.books.entities.Author;
 import com.example.books.service.AuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,22 +31,43 @@ public class AuthorController {
 
     private final AuthorService service;
 
+
     @Operation(summary = "Listar autores")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autores listados"),
+            @ApiResponse(responseCode = "401", description = "API Key inválida"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
+    })
     @GetMapping
     public List<Author> listar() {
+
         return service.listar();
     }
 
-    @Operation(summary = "Criar um autor")
+
+    @Operation(summary = "Criar autor")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Autor criado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "409", description = "Autor duplicado"),
+            @ApiResponse(responseCode = "401", description = "API Key inválida"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
+    })
     @PostMapping
-    public Author criar(
-            @RequestBody Author author
-    ) {
+    public Author criar(@RequestBody Author author) {
 
         return service.salvar(author);
     }
 
-    @Operation(summary = "Atualizar um autor")
+
+    @Operation(summary = "Atualizar autor")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autor atualizado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "401", description = "API Key inválida"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Author> atualizar(
             @PathVariable Long id,
@@ -53,7 +79,14 @@ public class AuthorController {
         );
     }
 
-    @Operation(summary = "Excluir um autor")
+
+    @Operation(summary = "Excluir autor")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Autor excluído"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "401", description = "API Key inválida"),
+            @ApiResponse(responseCode = "429", description = "Limite de requisições excedido")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long id
